@@ -273,6 +273,64 @@
       border-radius: 16px;
     }
 
+    /* Start screen / hero */
+
+    .hero {
+      max-width: 520px;
+      margin: 56px auto 0;
+      text-align: left;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      line-height: 1.25;
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--muted-text);
+      line-height: 1.5;
+      margin: 0 0 32px;
+    }
+
+    .hero-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto 36px;
+    }
+
+    .primary-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent-color);
+      color: #111111;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out,
+        background-color 0.12s ease-out;
+    }
+
+    .primary-cta:hover {
+      background: #ceff25;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .cta-arrow {
+      font-size: 16px;
+    }
+
     @media (max-width: 480px) {
       .nav-inner {
         padding: 10px 12px 6px;
@@ -285,6 +343,14 @@
 
       main h1 {
         font-size: 24px;
+      }
+
+      .hero {
+        margin-top: 40px;
+      }
+
+      .hero-title {
+        font-size: 26px;
       }
     }
   </style>
@@ -319,7 +385,7 @@
 
   <div class="page">
     <main id="content">
-      <!-- Quiz content is injected here -->
+      <!-- Start screen / quiz content is injected here -->
     </main>
 
     <div class="back-row">
@@ -928,6 +994,34 @@
         .addEventListener("click", () => location.reload());
     }
 
+    function renderStartScreen() {
+      // reset progress for the landing page
+      progressFill.style.width = "0%";
+
+      contentEl.innerHTML = `
+        <section class="hero">
+          <h1 class="hero-title">What finance personality are you?</h1>
+          <p class="hero-subtitle">
+            Answer a few questions to unlock your personalised personality assessment.
+          </p>
+          <img src="hero-image.png" alt="Illustration of different finance personalities" class="hero-image" />
+          <button type="button" class="primary-cta" id="startQuiz">
+            <span>Let's find out</span>
+            <span class="cta-arrow">→</span>
+          </button>
+        </section>
+      `;
+
+      backButton.style.visibility = "hidden";
+
+      document
+        .getElementById("startQuiz")
+        .addEventListener("click", () => {
+          currentIndex = 0;
+          renderQuestion();
+        });
+    }
+
     backButton.addEventListener("click", () => {
       if (currentIndex === 0) return;
       currentIndex -= 1;
@@ -936,9 +1030,8 @@
       renderQuestion();
     });
 
-    // Initial render
-    renderQuestion();
+    // Initial render: show landing screen
+    renderStartScreen();
   </script>
 </body>
 </html>
-
