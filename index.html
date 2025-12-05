@@ -63,7 +63,7 @@
     }
 
     .logo img {
-      height: 20px;         /* adjust logo size here */
+      height: 20px;
       width: auto;
       display: block;
     }
@@ -873,6 +873,11 @@
     const progressFill = document.getElementById("progressFill");
 
     let currentIndex = 0;
+    let isOnResultsPage = false;
+
+    function resetAnswers() {
+      Object.keys(answers).forEach((k) => delete answers[k]);
+    }
 
     function computeScores() {
       const scores = { O: 0, E: 0, S: 0, A: 0, P: 0, D: 0 };
@@ -890,7 +895,16 @@
       progressFill.style.width = percentage + "%";
     }
 
+    function setBackButtonLabel(label) {
+      const spans = backButton.querySelectorAll("span");
+      if (spans.length >= 2) {
+        spans[1].textContent = label;
+      }
+    }
+
     function renderQuestion() {
+      isOnResultsPage = false;
+      setBackButtonLabel("Back");
       updateProgress();
 
       if (currentIndex >= totalQuestions) {
@@ -977,24 +991,15 @@
         <ul>
           ${inTeamList}
         </ul>
-
-        <button type="button" class="option-card primary-option" id="restartQuiz">
-          <div class="option-main">
-            <span class="option-emoji">🔁</span>
-            <span class="option-text">Restart the quiz</span>
-          </div>
-          <span class="option-chevron">›</span>
-        </button>
       `;
 
+      isOnResultsPage = true;
+      setBackButtonLabel("Restart the quiz");
       backButton.style.visibility = "visible";
-
-      document
-        .getElementById("restartQuiz")
-        .addEventListener("click", () => location.reload());
     }
 
     function renderStartScreen() {
+      isOnResultsPage = false;
       // reset progress for the landing page
       progressFill.style.width = "0%";
 
@@ -1018,11 +1023,22 @@
         .getElementById("startQuiz")
         .addEventListener("click", () => {
           currentIndex = 0;
+          resetAnswers();
+          shuffledQuestions.sort(() => Math.random() - 0.5);
           renderQuestion();
         });
     }
 
     backButton.addEventListener("click", () => {
+      if (isOnResultsPage) {
+        // Restart: go back to start screen
+        currentIndex = 0;
+        resetAnswers();
+        shuffledQuestions.sort(() => Math.random() - 0.5);
+        renderStartScreen();
+        return;
+      }
+
       if (currentIndex === 0) return;
       currentIndex -= 1;
       // remove last answer so scores recompute cleanly
