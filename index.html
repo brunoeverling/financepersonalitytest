@@ -35,14 +35,77 @@
       flex-direction: column;
     }
 
-    .progress-bar {
+    /* Top navigation */
+
+    .top-nav {
       position: fixed;
       top: 0;
       left: 0;
+      right: 0;
+      background: #ffffff;
+      z-index: 20;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .nav-inner {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 12px 16px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .logo {
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .lang-picker {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .lang-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #e0e0e0;
+      background: #ffffff;
+      cursor: pointer;
+      color: var(--muted-text);
+    }
+
+    .lang-pill span.flag {
+      font-size: 14px;
+    }
+
+    .lang-pill span.code {
+      font-weight: 500;
+    }
+
+    .lang-pill--active {
+      background: #f5f5f5;
+      border-color: var(--accent-color);
+      color: var(--text-color);
+    }
+
+    .lang-pill:hover {
+      background: #f7f7f7;
+    }
+
+    /* Progress bar lives under nav */
+
+    .progress-bar {
       width: 100%;
       height: 4px;
       background: #f5f5f5;
-      z-index: 10;
     }
 
     .progress-fill {
@@ -54,22 +117,8 @@
 
     .page {
       max-width: 640px;
-      margin: 80px auto 96px;
+      margin: 96px auto 96px; /* leave room for fixed nav */
       padding: 0 16px;
-    }
-
-    header {
-      margin-bottom: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 8px;
-    }
-
-    .logo {
-      font-weight: 600;
-      font-size: 18px;
-      letter-spacing: 0.02em;
     }
 
     main h1 {
@@ -209,7 +258,7 @@
       border-color: var(--accent-color);
       background: #f3ffd0;
     }
-   
+
     .persona-avatar {
       display: block;
       width: 320px;
@@ -218,10 +267,14 @@
       margin: 12px auto 20px;
       border-radius: 16px;
     }
-    
+
     @media (max-width: 480px) {
+      .nav-inner {
+        padding: 10px 12px 6px;
+      }
+
       .page {
-        margin-top: 64px;
+        margin-top: 88px;
         margin-bottom: 72px;
       }
 
@@ -232,15 +285,31 @@
   </style>
 </head>
 <body>
-  <div class="progress-bar">
-    <div class="progress-fill" id="progressFill"></div>
+  <!-- Top navigation with logo, language picker and progress bar -->
+  <div class="top-nav">
+    <div class="nav-inner">
+      <div class="logo">moss</div>
+      <div class="lang-picker">
+        <button class="lang-pill lang-pill--active" type="button">
+          <span class="flag">🇬🇧</span>
+          <span class="code">EN</span>
+        </button>
+        <button class="lang-pill" type="button">
+          <span class="flag">🇳🇱</span>
+          <span class="code">NL</span>
+        </button>
+        <button class="lang-pill" type="button">
+          <span class="flag">🇩🇪</span>
+          <span class="code">DE</span>
+        </button>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
   </div>
 
   <div class="page">
-    <header>
-      <div class="logo">moss</div>
-    </header>
-
     <main id="content">
       <!-- Quiz content is injected here -->
     </main>
@@ -798,58 +867,58 @@
       backButton.style.visibility = currentIndex === 0 ? "hidden" : "visible";
     }
 
-function renderResults() {
-  const scores = computeScores();
+    function renderResults() {
+      const scores = computeScores();
 
-  const focus = scores.O >= scores.E ? "O" : "E";
-  const style = scores.S >= scores.A ? "S" : "A";
-  const orientation = scores.P >= scores.D ? "P" : "D";
+      const focus = scores.O >= scores.E ? "O" : "E";
+      const style = scores.S >= scores.A ? "S" : "A";
+      const orientation = scores.P >= scores.D ? "P" : "D";
 
-  const code = focus + style + orientation;
-  const persona = personalities[code] || personalities["EAD"];
+      const code = focus + style + orientation;
+      const persona = personalities[code] || personalities["EAD"];
 
-  progressFill.style.width = "100%";
+      progressFill.style.width = "100%";
 
-  const traitsList = persona.traits.map(t => `<li>${t}</li>`).join("");
-  const inTeamList = persona.inTeam.map(t => `<li>${t}</li>`).join("");
+      const traitsList = persona.traits.map(t => `<li>${t}</li>`).join("");
+      const inTeamList = persona.inTeam.map(t => `<li>${t}</li>`).join("");
 
-  contentEl.innerHTML = `
-    <h1>Here are your results!</h1>
+      contentEl.innerHTML = `
+        <h1>Here are your results!</h1>
 
-    ${
-      persona.image
-        ? `<img src="${persona.image}" alt="${persona.imageAlt || persona.name}" class="persona-avatar" />`
-        : ""
+        ${
+          persona.image
+            ? `<img src="${persona.image}" alt="${persona.imageAlt || persona.name}" class="persona-avatar" />`
+            : ""
+        }
+
+        <h2>${persona.name}</h2>
+        <p class="tagline">“${persona.tagline}”</p>
+
+        <h3>Character traits:</h3>
+        <ul>
+          ${traitsList}
+        </ul>
+
+        <h3>In the finance team:</h3>
+        <ul>
+          ${inTeamList}
+        </ul>
+
+        <button type="button" class="option-card primary-option" id="restartQuiz">
+          <div class="option-main">
+            <span class="option-emoji">🔁</span>
+            <span class="option-text">Restart the quiz</span>
+          </div>
+          <span class="option-chevron">›</span>
+        </button>
+      `;
+
+      backButton.style.visibility = "visible";
+
+      document
+        .getElementById("restartQuiz")
+        .addEventListener("click", () => location.reload());
     }
-
-    <h2>${persona.name}</h2>
-    <p class="tagline">“${persona.tagline}”</p>
-
-    <h3>Character traits:</h3>
-    <ul>
-      ${traitsList}
-    </ul>
-
-    <h3>In the finance team:</h3>
-    <ul>
-      ${inTeamList}
-    </ul>
-
-    <button type="button" class="option-card primary-option" id="restartQuiz">
-      <div class="option-main">
-        <span class="option-emoji">🔁</span>
-        <span class="option-text">Restart the quiz</span>
-      </div>
-      <span class="option-chevron">›</span>
-    </button>
-  `;
-
-  backButton.style.visibility = "visible";
-
-  document
-    .getElementById("restartQuiz")
-    .addEventListener("click", () => location.reload());
-}
 
     backButton.addEventListener("click", () => {
       if (currentIndex === 0) return;
@@ -861,6 +930,10 @@ function renderResults() {
 
     // Initial render
     renderQuestion();
+  </script>
+</body>
+</html>
+
   </script>
 </body>
 </html>
