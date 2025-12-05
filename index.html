@@ -58,9 +58,14 @@
     }
 
     .logo {
-      font-weight: 600;
-      font-size: 18px;
-      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 20px;         /* adjust logo size here */
+      width: auto;
+      display: block;
     }
 
     .lang-picker {
@@ -288,7 +293,10 @@
   <!-- Top navigation with logo, language picker and progress bar -->
   <div class="top-nav">
     <div class="nav-inner">
-      <div class="logo">moss</div>
+      <div class="logo">
+        <!-- Replace moss-logo.svg with your actual file path if different -->
+        <img src="moss-logo.svg" alt="Moss" />
+      </div>
       <div class="lang-picker">
         <button class="lang-pill lang-pill--active" type="button">
           <span class="flag">🇬🇧</span>
@@ -934,6 +942,3 @@
 </body>
 </html>
 
-  </script>
-</body>
-</html>
