@@ -575,6 +575,8 @@
       OSD: {
         name: "The Controller",
         tagline: "The guardian of order.",
+        image: "avatars/controller-osd.png",
+        imageAlt: "Avatar of The Controller, a precise finance guardian.",
         traits: [
           "Detail-obsessed and hates surprises in the P&L.",
           "Deep trust in numbers and reconciliations.",
@@ -591,6 +593,8 @@
       OSP: {
         name: "The Policy Partner",
         tagline: "The human face of control.",
+        image: "avatars/policy-partner-osp.png",
+        imageAlt: "Avatar of The Policy Partner, a friendly finance advisor.",
         traits: [
           "Balances rules with empathy.",
           "Strong communicator who explains complex topics simply.",
@@ -607,6 +611,8 @@
       OAD: {
         name: "The Detective Analyst",
         tagline: "The cost sleuth.",
+        image: "avatars/detective-analyst-oad.png",
+        imageAlt: "Avatar of The Detective Analyst, a curious cost sleuth.",
         traits: [
           "Curious and loves digging into anomalies and outliers.",
           "Enjoys models, ad-hoc analyses, and dashboards.",
@@ -623,6 +629,8 @@
       OAP: {
         name: "The Bargain Diplomat",
         tagline: "The negotiator.",
+        image: "avatars/bargain-diplomat-oap.png",
+        imageAlt: "Avatar of The Bargain Diplomat, a persuasive negotiator.",
         traits: [
           "Social, persuasive, and pragmatic.",
           "Enjoys negotiations and vendor relationships.",
@@ -639,6 +647,8 @@
       ESD: {
         name: "The Strategic Architect",
         tagline: "The builder of long-term value.",
+        image: "avatars/strategic-architect-esd.png",
+        imageAlt: "Avatar of The Strategic Architect, a long-term planner.",
         traits: [
           "Strategic, long-term thinker.",
           "Loves planning scenarios and financial models for growth.",
@@ -655,6 +665,8 @@
       ESP: {
         name: "The Growth Co-Pilot",
         tagline: "The business partner.",
+        image: "avatars/growth-copilot-esp.png",
+        imageAlt: "Avatar of The Growth Co-Pilot, a collaborative business partner.",
         traits: [
           "Commercially minded and collaborative.",
           "Thinks in trade-offs between growth and efficiency.",
@@ -671,6 +683,8 @@
       EAD: {
         name: "The Experimenter",
         tagline: "The growth hacker in finance.",
+        image: "avatars/experimenter-ead.png",
+        imageAlt: "Avatar of The Experimenter, an experimental growth hacker.",
         traits: [
           "Comfortable with uncertainty and experimentation.",
           "Loves testing hypotheses, A/B tests, and quick pilots.",
@@ -687,6 +701,8 @@
       EAP: {
         name: "The Deal Maker",
         tagline: "The connector.",
+        image: "avatars/deal-maker-eap.png",
+        imageAlt: "Avatar of The Deal Maker, an entrepreneurial connector.",
         traits: [
           "Entrepreneurial and opportunity-driven.",
           "Sees finance as a lever for deals and growth.",
@@ -781,55 +797,58 @@
       backButton.style.visibility = currentIndex === 0 ? "hidden" : "visible";
     }
 
-    function renderResults() {
-      const scores = computeScores();
+function renderResults() {
+  const scores = computeScores();
 
-      const focus = scores.O >= scores.E ? "O" : "E";
-      const style = scores.S >= scores.A ? "S" : "A";
-      const orientation = scores.P >= scores.D ? "P" : "D";
+  const focus = scores.O >= scores.E ? "O" : "E";
+  const style = scores.S >= scores.A ? "S" : "A";
+  const orientation = scores.P >= scores.D ? "P" : "D";
 
-      const code = focus + style + orientation;
-      const persona = personalities[code] || personalities["EAD"]; // fallback
+  const code = focus + style + orientation;
+  const persona = personalities[code] || personalities["EAD"];
 
-      progressFill.style.width = "100%";
+  progressFill.style.width = "100%";
 
-      const traitsList = persona.traits
-        .map((t) => `<li>${t}</li>`)
-        .join("");
-      const inTeamList = persona.inTeam
-        .map((t) => `<li>${t}</li>`)
-        .join("");
+  const traitsList = persona.traits.map(t => `<li>${t}</li>`).join("");
+  const inTeamList = persona.inTeam.map(t => `<li>${t}</li>`).join("");
 
-      contentEl.innerHTML = `
-        <h1>Here are your results!</h1>
-        <h2>${persona.name}</h2>
-        <p class="tagline">“${persona.tagline}”</p>
+  contentEl.innerHTML = `
+    <h1>Here are your results!</h1>
 
-        <h3>Character traits:</h3>
-        <ul>
-          ${traitsList}
-        </ul>
-
-        <h3>In the finance team:</h3>
-        <ul>
-          ${inTeamList}
-        </ul>
-
-        <button type="button" class="option-card primary-option" id="restartQuiz">
-          <div class="option-main">
-            <span class="option-emoji">🔁</span>
-            <span class="option-text">Restart the quiz</span>
-          </div>
-          <span class="option-chevron">›</span>
-        </button>
-      `;
-
-      backButton.style.visibility = "visible";
-
-      document
-        .getElementById("restartQuiz")
-        .addEventListener("click", () => location.reload());
+    ${
+      persona.image
+        ? `<img src="${persona.image}" alt="${persona.imageAlt || persona.name}" class="persona-avatar" />`
+        : ""
     }
+
+    <h2>${persona.name}</h2>
+    <p class="tagline">“${persona.tagline}”</p>
+
+    <h3>Character traits:</h3>
+    <ul>
+      ${traitsList}
+    </ul>
+
+    <h3>In the finance team:</h3>
+    <ul>
+      ${inTeamList}
+    </ul>
+
+    <button type="button" class="option-card primary-option" id="restartQuiz">
+      <div class="option-main">
+        <span class="option-emoji">🔁</span>
+        <span class="option-text">Restart the quiz</span>
+      </div>
+      <span class="option-chevron">›</span>
+    </button>
+  `;
+
+  backButton.style.visibility = "visible";
+
+  document
+    .getElementById("restartQuiz")
+    .addEventListener("click", () => location.reload());
+}
 
     backButton.addEventListener("click", () => {
       if (currentIndex === 0) return;
