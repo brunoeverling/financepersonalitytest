@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Moss – Finance Personality Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --accent-color: #d5ff3f; /* neon-ish green like Moss */
+      --text-color: #111111;
+      --muted-text: #6b6b6b;
+      --border-color: #e4e4e4;
+      --bg-color: #ffffff;
+      --option-hover-bg: #fafafa;
+      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-stack);
+      background: #ffffff;
+      color: var(--text-color);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #f5f5f5;
+      z-index: 10;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: var(--accent-color);
+      transition: width 0.25s ease-out;
+    }
+
+    .page {
+      max-width: 640px;
+      margin: 80px auto 96px;
+      padding: 0 16px;
+    }
+
+    header {
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .logo {
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    main h1 {
+      font-size: 28px;
+      line-height: 1.2;
+      margin: 32px 0 24px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-card {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      padding: 14px 16px;
+      background: var(--bg-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      text-align: left;
+      transition: box-shadow 0.15s ease-out, transform 0.15s ease-out,
+        border-color 0.15s ease-out, background-color 0.15s ease-out;
+    }
+
+    .option-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      transform: translateY(-1px);
+      background: var(--option-hover-bg);
+      border-color: #dcdcdc;
+    }
+
+    .option-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .option-emoji {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .option-text {
+      flex: 1;
+    }
+
+    .option-chevron {
+      font-size: 18px;
+      color: #b3b3b3;
+      flex-shrink: 0;
+    }
+
+    .back-row {
+      margin-top: 12px;
+    }
+
+    .back-button {
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted-text);
+      padding: 0;
+    }
+
+    .back-button:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 16px;
+      font-size: 12px;
+      color: var(--muted-text);
+      text-align: center;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    footer a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .tagline {
+      font-size: 16px;
+      color: var(--muted-text);
+      margin-top: 4px;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 4px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    ul {
+      margin: 0 0 8px 18px;
+      padding: 0;
+    }
+
+    .primary-option {
+      margin-top: 24px;
+      justify-content: center;
+      border-color: var(--accent-color);
+      background: #f7ffe0;
+    }
+
+    .primary-option:hover {
+      border-color: var(--accent-color);
+      background: #f3ffd0;
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        margin-top: 64px;
+        margin-bottom: 72px;
+      }
+
+      main h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="page">
+    <header>
+      <div class="logo">moss</div>
+    </header>
+
+    <main id="content">
+      <!-- Quiz content is injected here -->
+    </main>
+
+    <div class="back-row">
+      <button class="back-button" id="backButton" type="button">
+        <span>←</span><span>Back</span>
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    © 2024 Nufin GmbH · <a href="#">Impressum</a> ·
+    <a href="#">Cookie consent</a>
+  </footer>
+
+  <script>
+    const questions = [
+      {
+        id: "q1",
+        text:
+          "Your company suggests adding yet another SaaS tool to the stack. What\u2019s your gut reaction?",
+        options: [
+          {
+            emoji: "🧯",
+            text:
+              "\u201cAnother one? First I\u2019m staging an intervention for our tool graveyard.\u201d",
+            axis: "focus",
+            value: "O"
+          },
+          {
+            emoji: "🚀",
+            text:
+              "\u201cIf it unlocks growth, bring on the free trial and let\u2019s A/B-test our lives.\u201d",
+            axis: "focus",
+            value: "E"
+          }
+        ]
+      },
+      {
+        id: "q2",
+        text:
+          "Imagine your \u201cFinance Superpower\u201d headline on LinkedIn. Which one are you secretly proud of?",
+        options: [
+          {
+            emoji: "🕵️‍♂️",
+            text:
+              "\u201cI hunt down wasted euros and sleep like a baby when the P&L is clean.\u201d",
+            axis: "focus",
+            value: "O"
+          },
+          {
+            emoji: "⚡️",
+            text:
+              "\u201cI turn budgets into rocket fuel and help the business go brrr.\u201d",
+            axis: "focus",
+            value: "E"
+          }
+        ]
+      },
+      {
+        id: "q3",
+        text:
+          "The CEO says: \u201cWe can either boost margin or grow like crazy.\u201d Where\u2019s your heart?",
+        options: [
+          {
+            emoji: "🧮",
+            text:
+              "Margin. I want our unit economics so tight they could bounce a coin.",
+            axis: "focus",
+            value: "O"
+          },
+          {
+            emoji: "🌋",
+            text:
+              "Growth. Let\u2019s build something massive and figure out the rest responsibly.",
+            axis: "focus",
+            value: "E"
+          }
+        ]
+      },
+      {
+        id: "q4",
+        text:
+          "A team proudly tells you they came in 20% under budget. What\u2019s your inner monologue?",
+        options: [
+          {
+            emoji: "🥰",
+            text:
+              "\u201cLovely. That\u2019s my new favorite team. I\u2019ll frame their variance report.\u201d",
+            axis: "focus",
+            value: "O"
+          },
+          {
+            emoji: "🤔",
+            text:
+              "\u201cHmm. What opportunities did we miss? Why were they sitting on that money?\u201d",
+            axis: "focus",
+            value: "E"
+          }
+        ]
+      },
+      {
+        id: "q5",
+        text: "If you could push a magic button, what would it do?",
+        options: [
+          {
+            emoji: "🧹",
+            text:
+              "Instantly remove all wasteful spend and duplicate subscriptions. Poof.",
+            axis: "focus",
+            value: "O"
+          },
+          {
+            emoji: "🎯",
+            text:
+              "Unlock a pot of budget you can invest in bold, high-upside bets.",
+            axis: "focus",
+            value: "E"
+          }
+        ]
+      },
+      {
+        id: "q6",
+        text:
+          "You\u2019re in charge of setting up a new expense policy. How do you roll?",
+        options: [
+          {
+            emoji: "📚",
+            text:
+              "I open a doc, create sections, subsections, examples, edge cases\u2026 it\u2019s beautiful.",
+            axis: "style",
+            value: "S"
+          },
+          {
+            emoji: "✏️",
+            text:
+              "I write 5 simple rules, post them, and say: \u201cIf in doubt, just ping me.\u201d",
+            axis: "style",
+            value: "A"
+          }
+        ]
+      },
+      {
+        id: "q7",
+        text:
+          "Month-end close feels like a telenovela every time. What\u2019s your approach?",
+        options: [
+          {
+            emoji: "✅",
+            text:
+              "I design a strict checklist, automate reminders, and kill the drama at its source.",
+            axis: "style",
+            value: "S"
+          },
+          {
+            emoji: "🚒",
+            text:
+              "I put on my metaphorical firefighter helmet and tackle whatever\u2019s burning first.",
+            axis: "style",
+            value: "A"
+          }
+        ]
+      },
+      {
+        id: "q8",
+        text: "Your workspace looks like\u2026?",
+        options: [
+          {
+            emoji: "🗂️",
+            text:
+              "Folders, labels, colour-coded tabs. Even my spreadsheets have spreadsheets.",
+            axis: "style",
+            value: "S"
+          },
+          {
+            emoji: "🌀",
+            text:
+              "Organised chaos. I always find what I need\u2026 eventually.",
+            axis: "style",
+            value: "A"
+          }
+        ]
+      },
+      {
+        id: "q9",
+        text:
+          "A colleague invents a new \u201curgent\u201d reporting request out of nowhere. What do you do?",
+        options: [
+          {
+            emoji: "📋",
+            text:
+              "\u201cGreat, but let\u2019s define how we handle this for everyone before I become a one-person helpdesk.\u201d",
+            axis: "style",
+            value: "S"
+          },
+          {
+            emoji: "⚙️",
+            text:
+              "\u201cSure, I\u2019ll hack something together now and we\u2019ll see if it becomes a recurring thing.\u201d",
+            axis: "style",
+            value: "A"
+          }
+        ]
+      },
+      {
+        id: "q10",
+        text: "How do you feel about processes in general?",
+        options: [
+          {
+            emoji: "🛡️",
+            text:
+              "Love them. A good process is like a warm blanket and an audit-proof hug.",
+            axis: "style",
+            value: "S"
+          },
+          {
+            emoji: "🧭",
+            text:
+              "They\u2019re nice\u2026 as long as they don\u2019t stop us from doing the smart thing in the moment.",
+            axis: "style",
+            value: "A"
+          }
+        ]
+      },
+      {
+        id: "q11",
+        text:
+          "You notice a suspicious spike in marketing spend. Step one?",
+        options: [
+          {
+            emoji: "📊",
+            text:
+              "Open the data, summon my filters, and go full detective in the ledger.",
+            axis: "orientation",
+            value: "D"
+          },
+          {
+            emoji: "☎️",
+            text:
+              "Message the budget owner: \u201cOkay, what happened, tell me the saga.\u201d",
+            axis: "orientation",
+            value: "P"
+          }
+        ]
+      },
+      {
+        id: "q12",
+        text:
+          "You\u2019re trying to challenge a big spend decision. What\u2019s your weapon of choice?",
+        options: [
+          {
+            emoji: "📈",
+            text:
+              "A tidy deck with charts, trends, and a \u201cbest vs worst case\u201d model.",
+            axis: "orientation",
+            value: "D"
+          },
+          {
+            emoji: "🤝",
+            text:
+              "A conversation where we align on goals, trade-offs, and what really matters.",
+            axis: "orientation",
+            value: "P"
+          }
+        ]
+      },
+      {
+        id: "q13",
+        text: "Which of these sounds more \u201cyou\u201d?",
+        options: [
+          {
+            emoji: "🔢",
+            text:
+              "\u201cNumbers don\u2019t lie. People sometimes\u2026 forget details.\u201d",
+            axis: "orientation",
+            value: "D"
+          },
+          {
+            emoji: "🧠",
+            text:
+              "\u201cNumbers are great, but if I don\u2019t know the story, something\u2019s missing.\u201d",
+            axis: "orientation",
+            value: "P"
+          }
+        ]
+      },
+      {
+        id: "q14",
+        text:
+          "You get access to a shiny new spend analytics dashboard. Reaction?",
+        options: [
+          {
+            emoji: "🖱️",
+            text:
+              "\u201cFinally. Let me click every filter and build five views nobody asked for.\u201d",
+            axis: "orientation",
+            value: "D"
+          },
+          {
+            emoji: "📣",
+            text:
+              "\u201cNice. Who do I need to talk to so we actually use this to change behaviour?\u201d",
+            axis: "orientation",
+            value: "P"
+          }
+        ]
+      },
+      {
+        id: "q15",
+        text:
+          "A team is blowing their budget quarter after quarter. Where do you go first?",
+        options: [
+          {
+            emoji: "🔍",
+            text:
+              "Straight into variance analysis, trends, and line items until the pattern screams at me.",
+            axis: "orientation",
+            value: "D"
+          },
+          {
+            emoji: "🗣️",
+            text:
+              "Straight into a meeting: \u201cWalk me through your reality, what\u2019s going on?\u201d",
+            axis: "orientation",
+            value: "P"
+          }
+        ]
+      }
+    ];
+
+    const personalities = {
+      OSD: {
+        name: "The Controller",
+        tagline: "The guardian of order.",
+        traits: [
+          "Detail-obsessed and hates surprises in the P&L.",
+          "Deep trust in numbers and reconciliations.",
+          "Strong sense of responsibility and risk awareness.",
+          "Very process- and rules-driven (\u201cWhat\u2019s the policy?\u201d)."
+        ],
+        inTeam: [
+          "Owns month-end, compliance, and approvals.",
+          "Pushes for rigor in spend policies and audit trails.",
+          "Asks for documentation and clarity before sign-off.",
+          "Risk: can slow decisions if processes aren\u2019t followed."
+        ]
+      },
+      OSP: {
+        name: "The Policy Partner",
+        tagline: "The human face of control.",
+        traits: [
+          "Balances rules with empathy.",
+          "Strong communicator who explains complex topics simply.",
+          "Enjoys aligning teams around guidelines and policies.",
+          "Values fairness, transparency, and consistency."
+        ],
+        inTeam: [
+          "Bridges finance and the rest of the business.",
+          "Turns policies into understandable stories and trainings.",
+          "Leads budget cycles and policy rollouts.",
+          "Risk: spends a lot of time mediating conflicts."
+        ]
+      },
+      OAD: {
+        name: "The Detective Analyst",
+        tagline: "The cost sleuth.",
+        traits: [
+          "Curious and loves digging into anomalies and outliers.",
+          "Enjoys models, ad-hoc analyses, and dashboards.",
+          "Flexible and pragmatic with messy data.",
+          "Motivated by finding savings and hidden risks."
+        ],
+        inTeam: [
+          "Go-to person for \u201cWhat\u2019s going on with X?\u201d questions.",
+          "Finds weird spend patterns, duplicate vendors, and unused subscriptions.",
+          "Pilots new tools or automations to improve visibility.",
+          "Risk: may focus on analysis over stakeholder buy-in."
+        ]
+      },
+      OAP: {
+        name: "The Bargain Diplomat",
+        tagline: "The negotiator.",
+        traits: [
+          "Social, persuasive, and pragmatic.",
+          "Enjoys negotiations and vendor relationships.",
+          "Sees finance as a business partner, not a gatekeeper.",
+          "Comfortable bending the process a bit for better outcomes."
+        ],
+        inTeam: [
+          "Leads vendor negotiations and payment term discussions.",
+          "Says \u201cno\u201d in a way that still feels collaborative.",
+          "Uses relationships to drive savings and avoid waste.",
+          "Risk: can accumulate exceptions that are hard to track."
+        ]
+      },
+      ESD: {
+        name: "The Strategic Architect",
+        tagline: "The builder of long-term value.",
+        traits: [
+          "Strategic, long-term thinker.",
+          "Loves planning scenarios and financial models for growth.",
+          "Combines discipline with ambition.",
+          "Enjoys structure like OKRs, planning cycles, and playbooks."
+        ],
+        inTeam: [
+          "Often acts as FP&A or strategic finance partner.",
+          "Builds frameworks for budgeting, forecasting, and resource allocation.",
+          "Champions scalable tools and governance.",
+          "Risk: may stay high-level and miss operational pain points."
+        ]
+      },
+      ESP: {
+        name: "The Growth Co-Pilot",
+        tagline: "The business partner.",
+        traits: [
+          "Commercially minded and collaborative.",
+          "Thinks in trade-offs between growth and efficiency.",
+          "Strong storyteller for financial insights.",
+          "Likes structured rituals with other teams."
+        ],
+        inTeam: [
+          "Partners closely with Sales, Marketing, or Product.",
+          "Helps justify spend and prioritise projects.",
+          "Drives QBRs and spend review rituals.",
+          "Risk: may over-index on relationships over hard boundaries."
+        ]
+      },
+      EAD: {
+        name: "The Experimenter",
+        tagline: "The growth hacker in finance.",
+        traits: [
+          "Comfortable with uncertainty and experimentation.",
+          "Loves testing hypotheses, A/B tests, and quick pilots.",
+          "Enjoys tools, integrations, and automation.",
+          "Bias to action: \u201cLet\u2019s try, then measure.\u201d"
+        ],
+        inTeam: [
+          "Advocates for pilot budgets, experiments, and test-and-learn spend.",
+          "Helps growth teams track CAC, payback, and ROI of campaigns.",
+          "First to try new tooling (e.g., new spend analytics, card setups, workflows).",
+          "Risk: may underappreciate governance and long-term structure."
+        ]
+      },
+      EAP: {
+        name: "The Deal Maker",
+        tagline: "The connector.",
+        traits: [
+          "Entrepreneurial and opportunity-driven.",
+          "Sees finance as a lever for deals and growth.",
+          "Relationship- and narrative-focused.",
+          "Comfortable making decisions with imperfect data."
+        ],
+        inTeam: [
+          "Involved in big deals, partnerships, or complex commercial contracts.",
+          "Champions strategic bets and exceptions when the upside is clear.",
+          "Has a strong voice in leadership spend decisions.",
+          "Risk: might underestimate operational constraints and risk exposure."
+        ]
+      }
+    };
+
+    // Shuffle questions on load so they don't appear grouped by type
+    const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+    const totalQuestions = shuffledQuestions.length;
+
+    const answers = {}; // { index: { axis, value } }
+
+    const contentEl = document.getElementById("content");
+    const backButton = document.getElementById("backButton");
+    const progressFill = document.getElementById("progressFill");
+
+    let currentIndex = 0;
+
+    function computeScores() {
+      const scores = { O: 0, E: 0, S: 0, A: 0, P: 0, D: 0 };
+      Object.values(answers).forEach((ans) => {
+        if (scores[ans.value] != null) {
+          scores[ans.value] += 1;
+        }
+      });
+      return scores;
+    }
+
+    function updateProgress() {
+      const answeredCount = Math.min(currentIndex, totalQuestions);
+      const percentage = (answeredCount / totalQuestions) * 100;
+      progressFill.style.width = percentage + "%";
+    }
+
+    function renderQuestion() {
+      updateProgress();
+
+      if (currentIndex >= totalQuestions) {
+        renderResults();
+        return;
+      }
+
+      const q = shuffledQuestions[currentIndex];
+
+      const titleHtml = `<h1>${q.text}</h1>`;
+      const optionsHtml = q.options
+        .map(
+          (opt, idx) => `
+        <button class="option-card" type="button" data-option-index="${idx}">
+          <div class="option-main">
+            ${
+              opt.emoji
+                ? `<span class="option-emoji">${opt.emoji}</span>`
+                : ""
+            }
+            <span class="option-text">${opt.text}</span>
+          </div>
+          <span class="option-chevron">›</span>
+        </button>
+      `
+        )
+        .join("");
+
+      contentEl.innerHTML = titleHtml + `<div class="options">${optionsHtml}</div>`;
+
+      const optionButtons = contentEl.querySelectorAll(".option-card");
+      optionButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const optIndex = parseInt(btn.getAttribute("data-option-index"), 10);
+          const chosen = q.options[optIndex];
+
+          // Record answer
+          answers[currentIndex] = {
+            axis: chosen.axis,
+            value: chosen.value
+          };
+
+          currentIndex += 1;
+          renderQuestion();
+        });
+      });
+
+      backButton.style.visibility = currentIndex === 0 ? "hidden" : "visible";
+    }
+
+    function renderResults() {
+      const scores = computeScores();
+
+      const focus = scores.O >= scores.E ? "O" : "E";
+      const style = scores.S >= scores.A ? "S" : "A";
+      const orientation = scores.P >= scores.D ? "P" : "D";
+
+      const code = focus + style + orientation;
+      const persona = personalities[code] || personalities["EAD"]; // fallback
+
+      progressFill.style.width = "100%";
+
+      const traitsList = persona.traits
+        .map((t) => `<li>${t}</li>`)
+        .join("");
+      const inTeamList = persona.inTeam
+        .map((t) => `<li>${t}</li>`)
+        .join("");
+
+      contentEl.innerHTML = `
+        <h1>Here are your results!</h1>
+        <h2>${persona.name}</h2>
+        <p class="tagline">“${persona.tagline}”</p>
+
+        <h3>Character traits:</h3>
+        <ul>
+          ${traitsList}
+        </ul>
+
+        <h3>In the finance team:</h3>
+        <ul>
+          ${inTeamList}
+        </ul>
+
+        <button type="button" class="option-card primary-option" id="restartQuiz">
+          <div class="option-main">
+            <span class="option-emoji">🔁</span>
+            <span class="option-text">Restart the quiz</span>
+          </div>
+          <span class="option-chevron">›</span>
+        </button>
+      `;
+
+      backButton.style.visibility = "visible";
+
+      document
+        .getElementById("restartQuiz")
+        .addEventListener("click", () => location.reload());
+    }
+
+    backButton.addEventListener("click", () => {
+      if (currentIndex === 0) return;
+      currentIndex -= 1;
+      // remove last answer so scores recompute cleanly
+      delete answers[currentIndex];
+      renderQuestion();
+    });
+
+    // Initial render
+    renderQuestion();
+  </script>
+</body>
+</html>
